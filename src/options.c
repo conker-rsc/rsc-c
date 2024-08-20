@@ -36,10 +36,10 @@ void options_new(Options *options) {
 
 void options_set_defaults(Options *options) {
     /* server */
-    options->members = 1;
-    options->fatigue = 1;
-    options->max_quests = 50;
-    options->max_skills = 18;
+    options->members = 0;
+    options->fatigue = 0;
+    options->max_quests = 17;
+    options->max_skills = 16;
     options->registration = 1;
     options->idle_logout = 0;
     options->remember_username = 0;
@@ -65,7 +65,7 @@ void options_set_defaults(Options *options) {
     options->zoom_camera = 1;
     options->tab_respond = 1;
     options->option_numbers = 1;
-    options->compass_menu = 1;
+    options->compass_menu = 0;
     options->transaction_menus = 1;
     options->offer_x = 1;
     options->last_offer_x = 1;
@@ -79,14 +79,14 @@ void options_set_defaults(Options *options) {
     /* display */
     options->lowmem = 0;
     options->interlace = 0;
-    options->flicker = 1;
+    options->flicker = 0;
     options->fog_of_war = 1;
     options->ran_target_fps = 10;
     options->display_fps = 0;
     options->number_commas = 1;
     options->show_roofs = 1;
     options->remaining_experience = 1;
-    options->total_experience = 1;
+    options->total_experience = 0;
     options->experience_drops = 0;
     options->inventory_count = 0;
     options->condense_item_amounts = 1;
@@ -94,22 +94,22 @@ void options_set_defaults(Options *options) {
     options->wilderness_warning = 1;
     options->status_bars = 0;
     options->ground_item_models = 0;
-    options->ground_item_text = 1;
+    options->ground_item_text = 0;
     options->distant_animation = 1;
     options->tga_sprites = 0;
     options->show_hover_tooltip = 0;
     options->touch_keyboard_right = 0;
 
     /* bank */
-    options->bank_unstackble_withdraw = 1;
-    options->bank_search = 1;
-    options->bank_capacity = 1;
-    options->bank_value = 1;
-    options->bank_expand = 1;
-    options->bank_scroll = 1;
-    options->bank_menus = 1;
-    options->bank_inventory = 1;
-    options->bank_maintain_slot = 1;
+    options->bank_unstackble_withdraw = 0;
+    options->bank_search = 0;
+    options->bank_capacity = 0;
+    options->bank_value = 0;
+    options->bank_expand = 0;
+    options->bank_scroll = 0;
+    options->bank_menus = 0;
+    options->bank_inventory = 0;
+    options->bank_maintain_slot = 0;
 
     /* gl */
     options->ui_scale = 1;
@@ -119,10 +119,10 @@ void options_set_defaults(Options *options) {
 
 void options_set_vanilla(Options *options) {
     /* connection */
-    options->members = 1;
-    options->fatigue = 1;
-    options->max_quests = 50;
-    options->max_skills = 18;
+    options->members = 0;
+    options->fatigue = 0;
+    options->max_quests = 17;
+    options->max_skills = 16;
     options->registration = 0;
     options->idle_logout = 1;
     options->remember_username = 0;
