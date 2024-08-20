@@ -111,6 +111,8 @@ uint8_t switch_mouse_button = 1;
 void mudclient_new(mudclient *mud) {
     memset(mud, 0, sizeof(mudclient));
 
+    mud->refer_id = 2;
+
     mud->target_fps = 20;
     mud->loading_step = 1;
     mud->loading_progess_text = "Loading";
