@@ -45,7 +45,7 @@ void options_set_defaults(Options *options) {
     options->remember_username = 0;
     options->remember_password = 0;
     options->diversify_npcs = 0;
-    options->rename_herblaw_items = 0;
+    options->rename_herblaw_items = 1;
 
 #ifdef _WIN32
     strcpy(options->browser_command, "explorer \"%s\"");
