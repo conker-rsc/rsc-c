@@ -1382,6 +1382,9 @@ void mudclient_load_game_config(mudclient *mud) {
     if (mud->options->rename_herblaw_items) {
         modify_potion_dosage();
     }
+#if VERSION_CONFIG > 46 && MEDIA_IS_TGA
+    apply_sundae();
+#endif
 }
 
 static void mudclient_load_media_dat(mudclient *mud, void *media_jag) {

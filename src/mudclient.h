@@ -326,6 +326,10 @@ typedef struct mudclient mudclient;
 #include "custom/diverse-npcs.h"
 #include "custom/item-highlight.h"
 
+#if VERSION_CONFIG > 46 && MEDIA_IS_TGA
+#include "custom/sundae.h"
+#endif
+
 #ifdef USE_TOONSCAPE
 #include "custom/toonscape.h"
 #endif

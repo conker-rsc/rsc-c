@@ -14,11 +14,11 @@ void options_new(Options *options) {
     memset(options, 0, sizeof(Options));
 
     /* presets */
-    options->account_management = 1;
+    options->account_management = 0;
     options->anti_macro = 0;
     options->retry_login_on_disconnect = 0;
     options->show_additional_options = 1;
-    options->skip_tutorial = 1;
+    options->skip_tutorial = 0;
 
     /* experimental */
     options->thick_walls = 0;
