@@ -109,6 +109,7 @@ void mudclient_create_options_panel(mudclient *mud) {
 
     y += OPTION_HORIZ_GAP;
 
+#if 0
     control = mudclient_add_option_panel_checkbox(
         mud->panel_game_options,
         "@whi@3D ground items: ", mud->options->ground_item_models, x, y);
@@ -117,6 +118,7 @@ void mudclient_create_options_panel(mudclient *mud) {
     mud->game_option_types[control] = ADDITIONAL_OPTIONS_CHECKBOX;
 
     y += OPTION_HORIZ_GAP;
+#endif
 
     if (mud->options->members) {
         control = mudclient_add_option_panel_checkbox(
@@ -433,6 +435,7 @@ void mudclient_create_options_panel(mudclient *mud) {
 
     y += OPTION_HORIZ_GAP;
 
+#if VERSION_MEDIA > 58
     control = mudclient_add_option_panel_checkbox(
         mud->panel_ui_options,
         "@whi@Certificate items: ", mud->options->certificate_items, x, y);
@@ -441,6 +444,7 @@ void mudclient_create_options_panel(mudclient *mud) {
     mud->ui_option_types[control] = ADDITIONAL_OPTIONS_CHECKBOX;
 
     y += OPTION_HORIZ_GAP;
+#endif
 
     control = mudclient_add_option_panel_checkbox(
         mud->panel_ui_options, "@whi@Status bars: ", mud->options->status_bars,

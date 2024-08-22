@@ -368,13 +368,17 @@ void options_load(Options *options) {
     OPTION_INI_INT("inventory_count", options->inventory_count, 0, 1);
     OPTION_INI_INT("condense_item_amounts", options->condense_item_amounts, 0,
                    1);
+#if VERSION_MEDIA > 58
     OPTION_INI_INT("certificate_items", options->certificate_items, 0, 1);
+#else
+    OPTION_INI_INT("certificate_items", options->certificate_items, 0, 0);
+#endif
     OPTION_INI_INT("wilderness_warning", options->wilderness_warning, 0, 1);
     OPTION_INI_INT("status_bars", options->status_bars, 0, 1);
-    OPTION_INI_INT("ground_item_models", options->ground_item_models, 0, 1);
+    OPTION_INI_INT("ground_item_models", options->ground_item_models, 0, 0);
     OPTION_INI_INT("ground_item_text", options->ground_item_text, 0, 1);
     OPTION_INI_INT("distant_animation", options->distant_animation, 0, 1);
-    OPTION_INI_INT("tga_sprites", options->tga_sprites, 0, 1);
+    OPTION_INI_INT("tga_sprites", options->tga_sprites, 0, 0);
     OPTION_INI_INT("show_hover_tooltip", options->show_hover_tooltip, 0, 1);
     OPTION_INI_INT("touch_keyboard_right", options->touch_keyboard_right, 0, 1);
 
