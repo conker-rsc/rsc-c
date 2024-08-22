@@ -22,8 +22,6 @@ void apply_sundae(void) {
     game_data.items[11].description = mud_strdup("Hand crafted arrows");
     game_data.items[11].mask = 0; /* boots */
 
-    game_data.items[37].members = false; /* life-rune */
-
     game_data.items[156].name = mud_strdup("pickaxe");
     game_data.items[156].mask = 0xeedddd;
 
@@ -32,8 +30,6 @@ void apply_sundae(void) {
     game_data.items[222].mask = 0x7250b1;
     game_data.items[223].mask = 0x7250b1;
     game_data.items[224].mask = 0x7250b1;
-
-    game_data.items[306].members = false; /* superchisel */
 
     for (int i = 0; i < game_data.npc_count; i++) {
         free(game_data.npcs[i].command);

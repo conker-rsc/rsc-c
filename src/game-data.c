@@ -136,6 +136,9 @@ void game_data_load_data(int8_t *buffer, int is_members) {
 
     for (i = 0; i < game_data.item_count; i++) {
         if (!is_members && game_data.items[i].members == 1) {
+#if 1
+            game_data.items[i].members = 0;
+#else
             free(game_data.items[i].name);
             game_data.items[i].name = "Members object";
 
@@ -151,6 +154,7 @@ void game_data_load_data(int8_t *buffer, int is_members) {
 
             game_data.items[i].wearable = 0;
             game_data.items[i].special = 1;
+#endif
         }
     }
 
