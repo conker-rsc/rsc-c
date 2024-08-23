@@ -1213,10 +1213,14 @@ void surface_draw(Surface *surface) {
 #ifdef SDL12
     SDL_BlitSurface(mud->pixel_surface, NULL, mud->screen, NULL);
     SDL_Flip(mud->screen);
-#else
+#elif !defined(EMSCRIPTEN) || defined(RENDER_GL)
     if (mud->window != NULL) {
         SDL_BlitScaled(mud->pixel_surface, NULL, mud->screen, NULL);
-        // SDL_BlitSurface(mud->pixel_surface, NULL, mud->screen, NULL);
+        SDL_UpdateWindowSurface(mud->window);
+    }
+#else
+    if (mud->window != NULL) {
+        SDL_BlitSurface(mud->pixel_surface, NULL, mud->screen, NULL);
         SDL_UpdateWindowSurface(mud->window);
     }
 #endif
