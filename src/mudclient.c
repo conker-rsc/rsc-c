@@ -14,7 +14,7 @@ EM_JS(int, get_window_height, (), { return window.innerHeight; });
 
 EM_JS(void, browser_trigger_keyboard,
       (char *text, int is_password, int x, int y, int width, int height,
-       int font, int is_centred), {
+       int font, int is_centred, int is_scaled), {
           const keyboard = is_password ? window._mudclientPassword :
                                          window._mudclientKeyboard;
 
@@ -32,6 +32,12 @@ EM_JS(void, browser_trigger_keyboard,
           keyboard.style.top = `${y}px`;
 
           keyboard.style.width = `${width}px`;
+
+          if (is_scaled) {
+              keyboard.style.transform = 'scale(2)';
+          } else {
+              keyboard.style.transform = 'none';
+          }
 
           const fonts = {
               1: 'mudclient-font-bold-12',
@@ -177,14 +183,24 @@ void mudclient_resize(mudclient *mud) {
     SDL_FreeSurface(mud->screen);
     SDL_FreeSurface(mud->pixel_surface);
 
+    int surface_width = mud->game_width;
+    int surface_height = mud->game_height;
+
 #ifdef SDL12
     mud->screen = SDL_GetVideoSurface();
 #else
     mud->screen = SDL_GetWindowSurface(mud->window);
+
+#ifdef RENDER_SW
+    if (mudclient_is_ui_scaled(mud)) {
+        surface_width /= 2;
+        surface_height /= 2;
+    }
+#endif
 #endif
 
     mud->pixel_surface =
-        SDL_CreateRGBSurface(0, mud->game_width, mud->game_height, 32, 0xff0000,
+        SDL_CreateRGBSurface(0, surface_width, surface_height, 32, 0xff0000,
                              0x00ff00, 0x0000ff, 0);
 
     if (mud->surface != NULL) {
@@ -320,256 +336,8 @@ void mudclient_resize(mudclient *mud) {
 #endif
 }
 
-void mudclient_start_application(mudclient *mud, char *title) {
-#ifdef WII
-    VIDEO_Init();
-    WPAD_Init();
-    AUDIO_Init(NULL);
-    ASND_Init();
-    ASND_Pause(0); // TODO move
-
-    GXRModeObj *rmode = VIDEO_GetPreferredMode(NULL);
-    mud->framebuffers = malloc(2 * sizeof(uint8_t *));
-    mud->framebuffers[0] = SYS_AllocateFramebuffer(rmode);
-    mud->framebuffers[1] = SYS_AllocateFramebuffer(rmode);
-
-    mud->framebuffer = mud->framebuffers[0];
-    // MEM_K0_TO_K1
-
-    VIDEO_Configure(rmode);
-    VIDEO_SetNextFramebuffer(mud->framebuffer);
-    VIDEO_SetBlack(0);
-    VIDEO_Flush();
-    VIDEO_WaitVSync();
-
-    if (rmode->viTVMode & VI_NON_INTERLACE) {
-        VIDEO_WaitVSync();
-    }
-
-    WPAD_SetDataFormat(0, WPAD_FMT_BTNS_ACC_IR);
-    WPAD_SetVRes(0, rmode->fbWidth, rmode->xfbHeight);
-
-    KEYBOARD_Init(NULL);
-    MOUSE_Init();
-
-    mud->last_keyboard_button = -1;
-
-    // console_init(mud->framebuffer,20,20,rmode->fbWidth,rmode->xfbHeight,rmode->fbWidth*VI_DISPLAY_PIX_SZ);
-#elif defined(_3DS)
-    atexit(soc_shutdown);
-
-    // gfxInit(GSP_BGR8_OES, GSP_BGR8_OES, 0);
-    gfxInitDefault();
-
-    /* uncomment and disable draw_top_background to see stdout */
-    // consoleInit(GFX_TOP, NULL);
-
-    Result romfs_res = romfsInit();
-
-    if (romfs_res) {
-        mud_error("romfsInit: %08lX\n", romfs_res);
-        exit(1);
-    }
-
-    gfxSetDoubleBuffering(GFX_BOTTOM, 0);
-    gfxSetDoubleBuffering(GFX_TOP, 0);
-
-    mud->_3ds_framebuffer_top =
-        gfxGetFramebuffer(GFX_TOP, GFX_LEFT, NULL, NULL);
-
-#ifndef RENDER_3DS_GL
-    mud->_3ds_framebuffer_bottom =
-        gfxGetFramebuffer(GFX_BOTTOM, GFX_LEFT, NULL, NULL);
-#endif
-
-    /* allocate buffer for SOC service (networking) */
-    SOC_buffer = (u32 *)memalign(SOC_ALIGN, SOC_BUFFER_SIZE);
-
-    if (SOC_buffer == NULL) {
-        mud_error("memalign() fail\n");
-        exit(1);
-    }
-
-    int ret = -1;
-
-    if ((ret = socInit(SOC_buffer, SOC_BUFFER_SIZE)) != 0) {
-        mud_error("socInit: 0x%08X\n", (unsigned int)ret);
-        exit(1);
-    }
-
-    audio_buffer =
-        (u32 *)linearAlloc(SAMPLE_BUFFER_SIZE * BYTES_PER_SAMPLE * 2);
-
-    ndspInit();
-
-    ndspSetOutputMode(NDSP_OUTPUT_MONO);
-
-    ndspChnSetInterp(0, NDSP_INTERP_LINEAR);
-    ndspChnSetRate(0, SAMPLE_RATE);
-    ndspChnSetFormat(0, NDSP_FORMAT_MONO_PCM16);
-
-    float mix[12] = {0};
-    mix[0] = 1.0;
-    mix[1] = 1.0;
-
-    ndspChnSetMix(0, mix);
-
-    wave_buf[0].data_vaddr = &audio_buffer[0];
-    wave_buf[0].nsamples = SAMPLE_BUFFER_SIZE;
-
-    // wave_buf[1].data_vaddr = &audio_buffer[SAMPLE_BUFFER_SIZE];
-    // wave_buf[1].nsamples = SAMPLE_BUFFER_SIZE;
-
-    ndspChnWaveBufAdd(0, &wave_buf[0]);
-    // ndspChnWaveBufAdd(0, &wave_buf[1]);
-
-    HIDUSER_EnableGyroscope();
-#else
-
-#ifdef WIN32
-    WSADATA wsa_data = {0};
-    int ret = WSAStartup(MAKEWORD(2, 2), &wsa_data);
-
-    if (ret < 0) {
-        mud_error("WSAStartup() error: %d\n", WSAGetLastError());
-        exit(1);
-    }
-#endif
-
-#ifdef __SWITCH__
-    Result romfs_res = romfsInit();
-
-    if (romfs_res) {
-        mud_error("romfsInit: %08lX\n", romfs_res);
-        exit(1);
-    }
-#endif
-
-    int init = SDL_INIT_VIDEO;
-
-    if (mud->options->members && !mud->options->lowmem) {
-        init |= SDL_INIT_AUDIO;
-    }
-
-#ifdef __SWITCH__
-    init |= SDL_INIT_JOYSTICK;
-#endif
-
-    if (SDL_Init(init) < 0) {
-        mud_error("SDL_Init(): %s\n", SDL_GetError());
-        exit(1);
-    }
-
-#ifdef SDL12
-    (void)SDL_EnableUNICODE(1);
-#endif
-
-#ifdef __SWITCH__
-    SDL_JoystickEventState(SDL_ENABLE);
-    joystick = SDL_JoystickOpen(0);
-#endif
-
-/* XXX: currently require non-callback-based audio from SDL >= 2.0.4 */
-#ifdef SDL_VERSION_ATLEAST
-#if SDL_VERSION_ATLEAST(2, 0, 4)
-    if (mud->options->members && !mud->options->lowmem) {
-        SDL_AudioSpec wanted_audio;
-
-        wanted_audio.freq = SAMPLE_RATE;
-        wanted_audio.format = AUDIO_S16;
-        wanted_audio.channels = 1;
-        wanted_audio.silence = 0;
-        wanted_audio.samples = 1024;
-        wanted_audio.callback = NULL;
-
-        if (SDL_OpenAudio(&wanted_audio, NULL) < 0) {
-            mud_error("SDL_OpenAudio(): %s\n", SDL_GetError());
-        }
-    }
-#endif
-#endif
-
-#ifdef SDL12
-    SDL_WM_SetCaption("Runescape by Andrew Gower", NULL);
-    // SDL_WM_SetIcon(IMG_Load("win/2003scape.png"),NULL);
-#else
-    uint32_t windowflags = SDL_WINDOW_SHOWN;
-#if !defined(WII) && !defined(_3DS) && !defined(EMSCRIPTEN)
-    windowflags |= SDL_WINDOW_RESIZABLE;
-#endif
-#endif
-
-#ifdef RENDER_SW
-#ifdef SDL12
-    mud->screen = SDL_SetVideoMode(mud->game_width, mud->game_height, 32,
-                                   SDL_HWSURFACE | SDL_RESIZABLE);
-#else
-    mud->window =
-        SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-                         mud->game_width, mud->game_height, windowflags);
-
-    SDL_SetWindowMinimumSize(mud->window, MUD_MIN_WIDTH, MUD_MIN_HEIGHT);
-#endif
-
-    mudclient_resize(mud);
-#endif
-#ifndef SDL12
-    mud->default_cursor = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
-    mud->hand_cursor = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND);
-#endif
-
+static void mudclient_start_application_common(struct mudclient *mud) {
 #ifdef RENDER_GL
-    /*if (IMG_Init(IMG_INIT_PNG) == 0) {
-        mud_error("unable to initialize sdl_image: %s\n", IMG_GetError());
-    }*/
-#ifdef SDL12
-    mud->screen = SDL_SetVideoMode(mud->game_width, mud->game_height, 32,
-                                   SDL_OPENGL | SDL_RESIZABLE);
-#else
-#ifdef EMSCRIPTEN
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
-#elif defined(OPENGL15)
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 1);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 5);
-
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK,
-                        SDL_GL_CONTEXT_PROFILE_CORE);
-#elif defined(OPENGL20)
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
-
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK,
-                        SDL_GL_CONTEXT_PROFILE_CORE);
-#else
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
-
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK,
-                        SDL_GL_CONTEXT_PROFILE_CORE);
-
-    // SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
-    // SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
-#endif
-
-    windowflags |= SDL_WINDOW_OPENGL;
-
-    mud->gl_window =
-        SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-                         mud->game_width, mud->game_height, windowflags);
-
-    SDL_SetWindowMinimumSize(mud->gl_window, MUD_MIN_WIDTH, MUD_MIN_HEIGHT);
-
-    SDL_GLContext *context = SDL_GL_CreateContext(mud->gl_window);
-
-    if (!context) {
-        mud_error("SDL_GL_CreateContext(): %s\n", SDL_GetError());
-        exit(1);
-    }
-
-    SDL_GL_MakeCurrent(mud->gl_window, context);
-#endif
 
 #ifdef GLAD
 #if defined(SDL_OPENGL) || defined(SDL_WINDOW_OPENGL)
@@ -610,22 +378,9 @@ void mudclient_start_application(mudclient *mud, char *title) {
     glEnable(GL_SCISSOR_TEST);
 
     glDisable(GL_MULTISAMPLE);
-#endif
-#endif
+#endif /* RENDER_GL */
 
-#ifdef RENDER_3DS_GL
-    C3D_Init(C3D_DEFAULT_CMDBUF_SIZE);
-
-    mud->_3ds_gl_render_target =
-        C3D_RenderTargetCreate(240, 320, GPU_RB_RGBA8, GPU_RB_DEPTH16);
-    // C3D_RenderTargetCreate(240, 320, GPU_RB_RGBA8, GPU_RB_DEPTH24);
-
-    mud->_3ds_gl_offscreen_render_target =
-        C3D_RenderTargetCreate(240, 320, GPU_RB_RGBA5551, GPU_RB_DEPTH16);
-
-    C3D_RenderTargetSetOutput(mud->_3ds_gl_render_target, GFX_BOTTOM, GFX_LEFT,
-                              DISPLAY_TRANSFER_FLAGS);
-#endif
+    mudclient_resize(mud);
 
     mud->surface = malloc(sizeof(Surface));
 
@@ -1325,11 +1080,11 @@ int8_t *mudclient_read_data_file(mudclient *mud, char *file, char *description,
 }
 
 void mudclient_load_jagex(mudclient *mud) {
-#if defined(RENDER_SW)
     int8_t *jagex_jag =
         mudclient_read_data_file(mud, "jagex.jag", "Jagex library", 0);
 
     if (jagex_jag != NULL) {
+#ifdef RENDER_SW
         if (!mud->options->lowmem) {
             size_t len = 0;
             int8_t *logo_tga = load_data("logo.tga", 0, jagex_jag, &len);
@@ -1339,6 +1094,7 @@ void mudclient_load_jagex(mudclient *mud) {
 
             free(logo_tga);
         }
+#endif
         for (size_t i = 0; i < FONT_FILES_LENGTH; i++) {
             int8_t *font = load_data(font_files[i], 0, jagex_jag, NULL);
             if (font == NULL) {
@@ -1351,7 +1107,7 @@ void mudclient_load_jagex(mudclient *mud) {
         free(jagex_jag);
 #endif
     }
-#elif defined(RENDER_GL) || defined(RENDER_3DS_GL)
+#if defined(RENDER_GL) || defined(RENDER_3DS_GL)
     int logo_sprite_id = SPRITE_LIMIT - 1;
 
     mud->surface->sprite_width[logo_sprite_id] = 281;
@@ -4584,10 +4340,12 @@ void mudclient_draw_overhead(mudclient *mud) {
 
         mud->received_message_y[i] = y;
 
+#ifdef RENDER_GL
         if (mudclient_is_ui_scaled(mud)) {
             x /= 2;
             y /= 2;
         }
+#endif
 
         surface_draw_paragraph(mud->surface, mud->received_messages[i], x, y, 1,
                                YELLOW, 300);
@@ -4598,11 +4356,13 @@ void mudclient_draw_overhead(mudclient *mud) {
         int y = mud->action_bubbles[i].y;
         int scale = mud->action_bubbles[i].scale;
 
+#ifdef RENDER_GL
         if (mudclient_is_ui_scaled(mud)) {
             x /= 2;
             y /= 2;
             scale /= 2;
         }
+#endif
 
         int id = mud->action_bubbles[i].item;
         int scale_x = (39 * scale) / 100;
@@ -4662,10 +4422,12 @@ void mudclient_draw_overhead(mudclient *mud) {
         int y = mud->health_bars[i].y;
         int missing = mud->health_bars[i].missing;
 
+#ifdef RENDER_GL
         if (mudclient_is_ui_scaled(mud)) {
             x /= 2;
             y /= 2;
         }
+#endif
 
         surface_draw_box_alpha(mud->surface, x - 15, y - 3, missing, 5, GREEN,
                                192);
@@ -5242,12 +5004,10 @@ void mudclient_on_resize(mudclient *mud) {
     int new_width = MUD_WIDTH;
     int new_height = MUD_HEIGHT;
 
-#ifndef SDL12
 #ifdef RENDER_GL
     SDL_Window *window = mud->gl_window;
 #else
     SDL_Window *window = mud->window;
-#endif
 #endif
 
 #ifdef EMSCRIPTEN
@@ -5256,9 +5016,7 @@ void mudclient_on_resize(mudclient *mud) {
     SDL_SetWindowSize(window, new_width, new_height);
 #endif
 
-#ifndef SDL12
     SDL_GetWindowSize(window, &new_width, &new_height);
-#endif
 
 #ifdef ANDROID
     mudclient_full_width = new_width;
@@ -5295,6 +5053,11 @@ void mudclient_on_resize(mudclient *mud) {
     if (mud->scene != NULL) {
 #ifdef RENDER_SW
         free(mud->scene->scanlines);
+
+        if (mudclient_is_ui_scaled(mud)) {
+            new_width /= 2;
+            new_height /= 2;
+        }
 #endif
 
         // TODO change 12 to bar height - 1
@@ -5337,12 +5100,15 @@ void mudclient_trigger_keyboard(mudclient *mud, char *text, int is_password,
 #ifdef ANDROID
     SDL_StartTextInput();
 #elif defined(EMSCRIPTEN)
-    if (mudclient_is_ui_scaled(mud)) {
-        // TODO
+    int is_scaled = mudclient_is_ui_scaled(mud);
+
+    if (is_scaled) {
+        x *= 2;
+        y *= 2;
     }
 
     browser_trigger_keyboard(text, is_password, x, y, width, height, font,
-                             is_centred);
+                             is_centred, is_scaled);
 #endif
 }
 
@@ -5762,7 +5528,7 @@ void mudclient_walk_to_object(mudclient *mud, int x, int y, int direction,
 }
 
 int mudclient_is_ui_scaled(mudclient *mud) {
-#ifdef RENDER_GL
+#if defined(RENDER_GL) || defined(SDL2)
     return mud->options->ui_scale && mud->game_width >= (MUD_WIDTH * 2) &&
            mud->game_height >= (MUD_HEIGHT * 2);
 #else
@@ -5882,6 +5648,7 @@ int main(int argc, char **argv) {
 #endif
 
     mudclient_start_application(mud, "Runescape by Andrew Gower");
+    mudclient_start_application_common(mud);
 
 #ifdef RENDER_3DS_GL
     shaderProgramFree(&mud->surface->_3ds_gl_flat_shader);
