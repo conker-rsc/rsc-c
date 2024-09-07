@@ -710,12 +710,14 @@ void mudclient_key_pressed(mudclient *mud, int code, int char_code) {
             mud->key_up = 1;
         } else if (code == K_DOWN) {
             mud->key_down = 1;
+#if 0
         } else if (code == K_PAGE_UP) {
             mud->key_page_up = 1;
         } else if (code == K_PAGE_DOWN) {
             mud->key_page_down = 1;
         } else if (code == K_HOME) {
             mud->key_home = 1;
+#endif
         } else if (code == K_F1) {
             mud->options->interlace = !mud->options->interlace;
 
@@ -882,12 +884,14 @@ void mudclient_key_released(mudclient *mud, int code) {
         mud->key_up = 0;
     } else if (code == K_DOWN) {
         mud->key_down = 0;
+#if 0
     } else if (code == K_PAGE_UP) {
         mud->key_page_up = 0;
     } else if (code == K_PAGE_DOWN) {
         mud->key_page_down = 0;
     } else if (code == K_HOME) {
         mud->key_home = 0;
+#endif
     } else if (code == K_TAB) {
         mud->key_tab = 0;
     } else if (code == K_1) {

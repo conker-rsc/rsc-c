@@ -143,7 +143,7 @@
 #endif
 
 #define ZOOM_MIN 450
-#define ZOOM_MAX 2250 // old 1250
+#define ZOOM_MAX 1250
 #define ZOOM_INDOORS 550
 #define ZOOM_OUTDOORS 750
 
