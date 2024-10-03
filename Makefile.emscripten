@@ -10,7 +10,7 @@ CFLAGS += -fwrapv
 CFLAGS += -std=gnu99 -s USE_SDL=2 -DSDL2
 # build both wasm and js
 LDFLAGS += -sWASM=2
-LDFLAGS += -sWEBSOCKET_URL=wss://
+LDFLAGS += -sWEBSOCKET_URL=ws://
 LDFLAGS += -lm -lSDL2
 
 ifeq ($(RENDER_GL), 1)
