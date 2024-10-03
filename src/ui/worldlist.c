@@ -22,6 +22,7 @@ static void worldlist_read_presets(struct mudclient *mud);
 static void worldlist_select(mudclient *, int);
 
 static void worldlist_set_defaults(void) {
+#if 0
     strcpy(list[0].name, "OpenRSC_Preservation");
     strcpy(list[0].host, "game.openrsc.com");
     list[0].port = USE_WEBSOCKS ? 43496 : 43596; /* websockets */
@@ -39,6 +40,18 @@ static void worldlist_set_defaults(void) {
     list[2].port = USE_WEBSOCKS ? 43494 : 43594;
     strcpy(list[2].rsa_exponent, "00010001");
     strcpy(list[2].rsa_modulus, "86b03ac30518bdb3e508ca9660efc7738a73ee7dbedbcebf8c56d030a2bdae70503c60829b7fb5eceb529442234c21bce6d529c8da4fce870e83ceffc379e281");
+#else
+    strcpy(list[0].name, "Server_1");
+    strcpy(list[0].host, "server1.rscsundae.org");
+    list[0].port = USE_WEBSOCKS ? 43494 : 43594;
+    strcpy(list[0].rsa_exponent, "00010001");
+    strcpy(list[0].rsa_modulus, "00b04cef8e07e0116f20afce76afee8e97572a52bf8f5f43c91e683cc33a25f7fa1634a33a0c33dae348775ddeed7e151c37689080ec0aa4f542c5fe13a64df785");
+    strcpy(list[1].name, "localhost");
+    strcpy(list[1].host, "127.0.0.1");
+    list[1].port = USE_WEBSOCKS ? 43494 : 43594;
+    strcpy(list[1].rsa_exponent, "81f390b2cf8ca7039ee507975951d5a0b15a87bf8b3f99c966834118c50fd94d");
+    strcpy(list[1].rsa_modulus, "88c38748a58228f7261cdc340b5691d7d0975dee0ecdb717609e6bf971eb3fe723ef9d130e4686813739768ad9472eb46d8bfcc042c1a5fcb05e931f632eea5d");
+#endif
 }
 
 static void worldlist_read_presets(struct mudclient *mud) {
