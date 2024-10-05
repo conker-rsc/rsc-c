@@ -18,6 +18,23 @@ void apply_sundae(void) {
     game_data.animations[11].colour = 0; /* boots */
 #endif
 
+    /* remove members spells*/
+    for (int i = 0; i < game_data.spell_count; ++i) {
+        if (strstr(game_data.spells[i].name, "Ardougne") != NULL ||
+                strstr(game_data.spells[i].name, "Camelot") != NULL ||
+                strstr(game_data.spells[i].name, "Watchtower") != NULL ||
+                strstr(game_data.spells[i].name, "Charge") != NULL ||
+                strstr(game_data.spells[i].name, "Iban") != NULL) {
+            game_data.spell_count--;
+            for (int j = i; j < game_data.spell_count; ++j) {
+                game_data.spells[j] = game_data.spells[j + 1];
+            }
+            i--;
+        } else if (strstr(game_data.spells[i].name, "Fire blast") != NULL) {
+            game_data.spell_count = i + 1;
+        }
+    }
+
     game_data.items[11].name = mud_strdup("Arrows");
     game_data.items[11].description = mud_strdup("Hand crafted arrows");
     game_data.items[11].mask = 0; /* boots */
