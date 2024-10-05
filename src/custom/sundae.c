@@ -22,6 +22,8 @@ void apply_sundae(void) {
     game_data.items[11].description = mud_strdup("Hand crafted arrows");
     game_data.items[11].mask = 0; /* boots */
 
+    game_data.objects[139].description = "The Bank of Varrock";
+
     game_data.items[156].name = mud_strdup("pickaxe");
     game_data.items[156].mask = 0xeedddd;
 
