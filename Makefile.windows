@@ -1,4 +1,4 @@
-CC = /usr/pkg/cross/i686-w64-mingw32-msvcrt/bin/i686-w64-mingw32-gcc
+CC = /usr/pkg/cross/i686-w64-mingw32/bin/i686-w64-mingw32-gcc
 WINDRES = /usr/pkg/cross/i686-w64-mingw32/bin/i686-w64-mingw32-windres
 SRC = $(wildcard src/*.c src/lib/*.c src/lib/rsa/*.c src/ui/*.c src/custom/*.c)
 OBJ = $(SRC:.c=.o) ./win/icon.res ./win/meta.res
