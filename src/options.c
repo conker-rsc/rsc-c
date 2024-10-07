@@ -102,7 +102,7 @@ void options_set_defaults(Options *options) {
     options->touch_keyboard_right = 0;
 
     /* bank */
-    options->bank_unstackble_withdraw = 0;
+    options->bank_unstackble_withdraw = 1;
     options->bank_search = 0;
     options->bank_capacity = 0;
     options->bank_value = 0;
@@ -113,8 +113,13 @@ void options_set_defaults(Options *options) {
     options->bank_maintain_slot = 0;
 
     /* gl */
+#ifndef EMSCRIPTEN
     options->ui_scale = 1;
     options->anti_alias = 1;
+#else
+    options->ui_scale = 0;
+    options->anti_alias = 0;
+#endif
     options->field_of_view = 360;
 }
 
@@ -360,7 +365,11 @@ void options_load(Options *options) {
     OPTION_INI_INT("fog_of_war", options->fog_of_war, 0, 1);
     OPTION_INI_INT("ran_target_fps", options->ran_target_fps, 0, 50);
     OPTION_INI_INT("display_fps", options->display_fps, 0, 1);
+#ifdef EMSCRIPTEN
     OPTION_INI_INT("ui_scale", options->ui_scale, 0, 1);
+#else
+    OPTION_INI_INT("ui_scale", options->ui_scale, 0, 0);
+#endif
     OPTION_INI_INT("anti_alias", options->anti_alias, 0, 1);
     OPTION_INI_INT("field_of_view", options->field_of_view, 0, 880);
     OPTION_INI_INT("show_roofs", options->show_roofs, 0, 1);
