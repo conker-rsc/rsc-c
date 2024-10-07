@@ -365,7 +365,7 @@ void options_load(Options *options) {
     OPTION_INI_INT("fog_of_war", options->fog_of_war, 0, 1);
     OPTION_INI_INT("ran_target_fps", options->ran_target_fps, 0, 50);
     OPTION_INI_INT("display_fps", options->display_fps, 0, 1);
-#ifdef EMSCRIPTEN
+#ifndef EMSCRIPTEN
     OPTION_INI_INT("ui_scale", options->ui_scale, 0, 1);
 #else
     OPTION_INI_INT("ui_scale", options->ui_scale, 0, 0);
