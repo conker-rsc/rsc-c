@@ -5,7 +5,11 @@
 #define VERSION_ENTITY 8
 #define VERSION_FILTER 2
 #define VERSION_MAPS 27
+#ifdef ANDROID
+#define VERSION_MEDIA 59
+#else
 #define VERSION_MEDIA 26
+#endif
 #define VERSION_MODELS 36
 #define VERSION_SOUNDS 1
 #define VERSION_TEXTURES 17
