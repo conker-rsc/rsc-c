@@ -4335,7 +4335,7 @@ void mudclient_draw_ui(mudclient *mud) {
         mudclient_draw_experience_drops(mud);
     }
 
-    if (mud->options->status_bars) {
+    if (mud->options->status_bars && mudclient_is_in_combat(mud)) {
         mudclient_draw_status_bars(mud);
     }
 

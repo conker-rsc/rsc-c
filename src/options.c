@@ -52,7 +52,7 @@ void options_set_server(Options *options) {
 
 void options_set_defaults(Options *options) {
     /* server */
-    options->members = 1;
+    options->members = 0;
     options->registration = 1;
     options->idle_logout = 0;
     options->remember_username = 0;
@@ -122,7 +122,7 @@ void options_set_defaults(Options *options) {
 
 void options_set_vanilla(Options *options) {
     /* connection */
-    options->members = 1;
+    options->members = 0;
     options->registration = 0;
     options->idle_logout = 1;
     options->remember_username = 0;
