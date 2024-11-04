@@ -83,10 +83,15 @@ void mudclient_poll_events(mudclient *mud) {
                 }
 
                 if (event.wheel.x != 0) {
-                    int direction = event.wheel.x > 0 ? 1 : -1;
+                    int direction = event.wheel.x > 0 ? -1 : 1;
 
+#if defined(__APPLE__)
                     mud->camera_rotation =
-                        (mud->camera_rotation + (direction * 3)) & 0xff;
+                        (mud->camera_rotation + (direction * 6)) & 0xff;
+#else
+                    mud->camera_rotation =
+                        (mud->camera_rotation + (direction * 4)) & 0xff;
+#endif
                 }
             }
             break;

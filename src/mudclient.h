@@ -104,6 +104,9 @@
 #define K_PAGE_DOWN 34
 #define K_HOME 36
 #define K_F1 112
+#define K_F2 113
+#define K_F3 114
+#define K_F4 115
 #define K_ENTER 13
 
 #define K_BACKSPACE 8
