@@ -1663,8 +1663,16 @@ void mudclient_draw_right_click_menu(mudclient *mud) {
         snprintf(combined, sizeof(combined), "%s %s", menu_item_text1,
                  menu_item_text2);
 
-        surface_draw_string(mud->surface, combined, entry_x, entry_y,
-                            FONT_BOLD_12, text_colour);
+        int specialColour = -1;
+
+        if (mud->menu_items[mud->menu_indices[i]].type == MENU_GROUNDITEM_TAKE) {
+            if (highlight_item(mud->menu_items[mud->menu_indices[i]].index) > 0) {
+                specialColour = highlight_item(mud->menu_items[mud->menu_indices[i]].index);
+            }
+        }
+
+        surface_draw_colour_string(mud->surface, combined, entry_x, entry_y,
+                            FONT_BOLD_12, text_colour, specialColour);
     }
 }
 

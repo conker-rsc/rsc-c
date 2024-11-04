@@ -16,6 +16,16 @@ prominent new features include:
 * bank interface with scrollbar and search
 * [...and more! ](https://github.com/2003scape/rsc-c#options)
 
+### conker tweaks
+
+* fix macos HIDPI support
+* reverse touchpad camera rotation 
+* faster touchpad camera rotation (diff values for macos)
+* faster camera zoom (macos only)
+* ground item colors show in right-click menu
+* move status bars up when not in combat
+* F2 hides roofs
+
 ### controls (3ds):
 
 * d-pad/circle pad to control camera

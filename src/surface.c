@@ -2884,6 +2884,11 @@ void surface_draw_blur(Surface *surface, int blur_height, int x, int y,
 
 void surface_draw_string_depth(Surface *surface, const char *text, int x, int y,
                                FontStyle font, int colour, float depth) {
+    surface_draw_colour_string_depth(surface, text, x, y, font, colour, -1, depth);
+}
+
+void surface_draw_colour_string_depth(Surface *surface, const char *text, int x, int y,
+                               FontStyle font, int colour, int specialColour, float depth) {
     int8_t *font_data = game_fonts[font];
     size_t text_length = strlen(text);
 
@@ -2898,11 +2903,15 @@ void surface_draw_string_depth(Surface *surface, const char *text, int x, int y,
             strncpy(sliced, text + start, end - start);
             strtolower(sliced);
 
-            int string_colour = colour_str_to_colour(
-                sliced, surface->mud->options->ran_target_fps);
+            if (specialColour > -1) {
+                colour = specialColour;
+            } else {
+                int string_colour = colour_str_to_colour(
+                    sliced, surface->mud->options->ran_target_fps);
 
-            if (string_colour >= 0) {
-                colour = string_colour;
+                if (string_colour >= 0) {
+                    colour = string_colour;
+                }
             }
 
             i += 4;
@@ -2980,6 +2989,11 @@ void surface_draw_string_depth(Surface *surface, const char *text, int x, int y,
 void surface_draw_string(Surface *surface, const char *text, int x, int y,
                          FontStyle font, int colour) {
     surface_draw_string_depth(surface, text, x, y, font, colour, 0);
+}
+
+void surface_draw_colour_string(Surface *surface, const char *text, int x, int y,
+                         FontStyle font, int colour, int specialColour) {
+    surface_draw_colour_string_depth(surface, text, x, y, font, colour, specialColour, 0);
 }
 
 void surface_draw_string_right(Surface *surface, const char *text, int x, int y,

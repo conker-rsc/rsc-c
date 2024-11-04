@@ -478,6 +478,8 @@ void mudclient_key_pressed(mudclient *mud, int code, int char_code) {
             memset(mud->input_text_current, '\0', INPUT_TEXT_LENGTH + 1);
             memset(mud->input_pm_current, '\0', INPUT_PM_LENGTH + 1);
             memset(mud->input_digits_current, '\0', INPUT_DIGITS_LENGTH + 1);
+        } else if (code == K_F2) {
+            mud->options->show_roofs = !mud->options->show_roofs;
         }
     } else {
         if (code == K_TAB) {
@@ -3234,7 +3236,12 @@ void mudclient_handle_camera_zoom(mudclient *mud) {
           mud->mouse_y > exclude_min_y && mud->mouse_y <= exclude_max_y &&
           mud->mouse_x <= exclude_max_x) &&
         !mud->show_dialog_bank) {
+
+#if defined(__APPLE__)
+        mud->camera_zoom += mud->mouse_scroll_delta * 36;
+#else
         mud->camera_zoom += mud->mouse_scroll_delta * 24;
+#endif
     }
 
     if (mud->camera_zoom > ZOOM_MAX) {
