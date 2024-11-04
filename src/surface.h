@@ -353,8 +353,16 @@ void surface_draw_blur(Surface *surface, int blur_height, int x, int y,
 #endif
 void surface_draw_string_depth(Surface *surface, const char *text, int x, int y,
                                FontStyle font, int colour, float depth);
+
+void surface_draw_colour_string_depth(Surface *surface, const char *text, int x, int y,
+                               FontStyle font, int colour, int specialColour, float depth);
+
 void surface_draw_string(Surface *surface, const char *text, int x, int y,
                          FontStyle font, int colour);
+
+void surface_draw_colour_string(Surface *surface, const char *text, int x, int y,
+                               FontStyle font, int colour, int specialColour);
+
 void surface_draw_string_right(Surface *surface, const char *text, int x, int y,
                                FontStyle font, int colour);
 void surface_draw_string_centre_depth(Surface *surface, const char *text, int x,

@@ -29,6 +29,15 @@ void get_sdl_keycodes(SDL_Keysym *keysym, char *char_code, int *code) {
     case SDL_SCANCODE_F1:
         *code = K_F1;
         break;
+    case SDL_SCANCODE_F2:
+        *code = K_F2;
+        break;
+    case SDL_SCANCODE_F3:
+        *code = K_F3;
+        break;
+    case SDL_SCANCODE_F4:
+        *code = K_F4;
+        break;
     case SDL_SCANCODE_ESCAPE:
         *code = K_ESCAPE;
         break;
@@ -237,6 +246,9 @@ void mudclient_start_application(mudclient *mud, char *title) {
     SDL_SetHint(SDL_HINT_MOUSE_FOCUS_CLICKTHROUGH, "1");
 #endif
 
+SDL_SetHint(SDL_HINT_VIDEO_HIGHDPI_DISABLED, "0");
+SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1");
+
 #ifdef __SWITCH__
     SDL_JoystickEventState(SDL_ENABLE);
     joystick = SDL_JoystickOpen(0);
@@ -262,7 +274,11 @@ void mudclient_start_application(mudclient *mud, char *title) {
 #endif
 #endif
 
-    uint32_t windowflags = SDL_WINDOW_SHOWN;
+    uint32_t windowflags = SDL_WINDOW_SHOWN | SDL_WINDOW_ALLOW_HIGHDPI;
+
+#if defined(__APPLE__)
+    windowflags = windowflags | SDL_WINDOW_MAXIMIZED;
+#endif
 
 #if !defined(WII) && !defined(_3DS) && !defined(EMSCRIPTEN)
     windowflags |= SDL_WINDOW_RESIZABLE;
