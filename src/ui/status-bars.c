@@ -22,8 +22,11 @@ void mudclient_draw_status_bars(mudclient *mud) {
 
     int ui_x = is_touch ? 4 : 7;
 
-    int ui_y = is_touch ? mud->surface->height - status_bar_height
-                        : 15 + (combat_button_height * 5) + 6;
+    int not_touch_y = mudclient_is_in_combat(mud) ? 
+        15 + (combat_button_height * 5) + 6 : combat_button_height;
+
+
+    int ui_y = is_touch ? mud->surface->height - status_bar_height : not_touch_y;
 
     int x = ui_x;
     int y = ui_y;
