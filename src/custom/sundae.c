@@ -44,6 +44,9 @@ void apply_sundae(void) {
     game_data.items[156].name = mud_strdup("pickaxe");
     game_data.items[156].mask = 0xeedddd;
 
+    /* no command for spade */
+    game_data.items[211].command = "";
+
     /* recolour strength potion to original */
     game_data.items[221].mask = 0x7250b1;
     game_data.items[222].mask = 0x7250b1;
