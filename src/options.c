@@ -90,7 +90,7 @@ void options_set_defaults(Options *options) {
     options->display_fps = 0;
     options->number_commas = 1;
     options->show_roofs = 1;
-    options->remaining_experience = 1;
+    options->remaining_experience = 0;
     options->total_experience = 0;
     options->experience_drops = 0;
     options->inventory_count = 0;
