@@ -1,5 +1,4 @@
 CC = i686-w64-mingw32-gcc
-DEBUG = 0
 SRC = $(wildcard src/*.c src/lib/*.c src/lib/rsa/*.c src/ui/*.c src/custom/*.c)
 OBJ = $(SRC:.c=.o) ./win/icon.res ./win/meta.res
 CFLAGS = -std=gnu99 -fwrapv -I ./cglm/include -I ./glew-2.1.0/include
@@ -12,10 +11,12 @@ LDFLAGS = -lm -L ./SDL2-2.0.20/i686-w64-mingw32/lib -lmingw32
 LDFLAGS += -L ./glew-2.1.0/lib/Release/Win32/ -lopengl32 -lglu32 -lglew32
 LDFLAGS += -lSDL2main -lSDL2 -lwsock32 -lws2_32
 
+CFLAGS += -Wno-incompatible-pointer-types
+
 ifdef DEBUG
 CFLAGS += -Wall -Wextra -pedantic -g
 else
-CFLAGS += -s -Ofast
+CFLAGS += -s -O3 -ffast-math
 LDFLAGS += -s -mwindows
 endif
 
