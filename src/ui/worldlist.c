@@ -22,23 +22,17 @@ static void worldlist_read_presets(struct mudclient *mud);
 static void worldlist_select(mudclient *, int);
 
 static void worldlist_set_defaults(void) {
-    strcpy(list[0].name, "OpenRSC_Preservation");
-    strcpy(list[0].host, "game.openrsc.com");
-    list[0].port = USE_WEBSOCKS ? 43496 : 43596; /* websockets */
+    strcpy(list[0].name, "2002scape");
+    strcpy(list[0].host, "2002.rscsundae.org");
+    list[0].port = USE_WEBSOCKS ? 43496 : 43596;
     strcpy(list[0].rsa_exponent, "00010001");
-    strcpy(list[0].rsa_modulus, "87cef754966ecb19806238d9fecf0f421e816976f74f365c86a584e51049794d41fefbdc5fed3a3ed3b7495ba24262bb7d1dd5d2ff9e306b5bbf5522a2e85b25");
+    strcpy(list[0].rsa_modulus, "00b04cef8e07e0116f20afce76afee8e97572a52bf8f5f43c91e683cc33a25f7fa1634a33a0c33dae348775ddeed7e151c37689080ec0aa4f542c5fe13a64df785");
 
-    strcpy(list[1].name, "OpenRSC_Uranium");
-    strcpy(list[1].host, "game.openrsc.com");
-    list[1].port = USE_WEBSOCKS ? 43435 : 43235;
-    strcpy(list[1].rsa_exponent, "00010001");
-    strcpy(list[1].rsa_modulus, "87cef754966ecb19806238d9fecf0f421e816976f74f365c86a584e51049794d41fefbdc5fed3a3ed3b7495ba24262bb7d1dd5d2ff9e306b5bbf5522a2e85b25");
-
-    strcpy(list[2].name, "Neat_F2P");
-    strcpy(list[2].host, "192.3.118.9");
-    list[2].port = USE_WEBSOCKS ? 43494 : 43594;
-    strcpy(list[2].rsa_exponent, "00010001");
-    strcpy(list[2].rsa_modulus, "86b03ac30518bdb3e508ca9660efc7738a73ee7dbedbcebf8c56d030a2bdae70503c60829b7fb5eceb529442234c21bce6d529c8da4fce870e83ceffc379e281");
+    strcpy(list[1].name, "localhost");
+    strcpy(list[1].host, "127.0.0.1");
+    list[1].port = USE_WEBSOCKS ? 43494 : 43594;
+    strcpy(list[1].rsa_exponent, "81f390b2cf8ca7039ee507975951d5a0b15a87bf8b3f99c966834118c50fd94d");
+    strcpy(list[1].rsa_modulus, "88c38748a58228f7261cdc340b5691d7d0975dee0ecdb717609e6bf971eb3fe723ef9d130e4686813739768ad9472eb46d8bfcc042c1a5fcb05e931f632eea5d");
 }
 
 static void worldlist_read_presets(struct mudclient *mud) {

@@ -1,5 +1,5 @@
 CC = i686-w64-mingw32-gcc
-DEBUG = 1
+DEBUG = 0
 SRC = $(wildcard src/*.c src/lib/*.c src/lib/rsa/*.c src/ui/*.c src/custom/*.c)
 OBJ = $(SRC:.c=.o) ./win/icon.res ./win/meta.res
 CFLAGS = -std=gnu99 -fwrapv -I ./cglm/include -I ./glew-2.1.0/include

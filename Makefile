@@ -1,5 +1,5 @@
 #CC = clang
-DEBUG ?= 1
+DEBUG ?= 0
 SDL2 ?= 1
 GLAD ?= 0
 RENDER_GL ?= 0

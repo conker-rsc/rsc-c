@@ -19,7 +19,7 @@ void options_new(Options *options) {
     options->anti_macro = 0;
     options->retry_login_on_disconnect = 0;
     options->show_additional_options = 1;
-    options->skip_tutorial = 1;
+    options->skip_tutorial = 0;
 
     /* experimental */
     options->thick_walls = 0;
@@ -45,15 +45,15 @@ void options_set_defaults(Options *options) {
     options->version_models = VERSION_MODELS;
     options->version_sounds = VERSION_SOUNDS;
     options->version_textures = VERSION_TEXTURES;
-    options->fatigue = 1;
-    options->max_quests = 50;
-    options->max_skills = 18;
+    options->fatigue = 0;
+    options->max_quests = 23;
+    options->max_skills = 16;
     options->registration = 0;
     options->idle_logout = 0;
     options->remember_username = 0;
     options->remember_password = 0;
     options->diversify_npcs = 0;
-    options->rename_herblaw_items = 0;
+    options->rename_herblaw_items = 1;
 
 #ifdef _WIN32
     strcpy(options->browser_command, "explorer \"%s\"");
@@ -69,15 +69,19 @@ void options_set_defaults(Options *options) {
     options->off_handle_scroll_drag = 1;
     options->escape_clear = 1;
     options->mouse_wheel = 1;
+#ifdef EMSCRIPTEN
+    options->middle_click_camera = 0;
+#else
     options->middle_click_camera = 25;
+#endif
     options->zoom_camera = 1;
     options->tab_respond = 1;
     options->option_numbers = 1;
-    options->compass_menu = 1;
+    options->compass_menu = 0;
     options->transaction_menus = 1;
     options->offer_x = 1;
     options->last_offer_x = 1;
-    options->wiki_lookup = 1;
+    options->wiki_lookup = 0;
     options->combat_style_always = 0;
     options->hold_to_buy = 1;
     options->touch_vertical_drag = 33;
@@ -87,14 +91,14 @@ void options_set_defaults(Options *options) {
     /* display */
     options->lowmem = 0;
     options->interlace = 0;
-    options->flicker = 1;
+    options->flicker = 0;
     options->fog_of_war = 1;
     options->ran_target_fps = 10;
     options->display_fps = 0;
     options->number_commas = 1;
     options->show_roofs = 1;
-    options->remaining_experience = 1;
-    options->total_experience = 1;
+    options->remaining_experience = 0;
+    options->total_experience = 0;
     options->experience_drops = 0;
     options->inventory_count = 0;
     options->condense_item_amounts = 1;
@@ -104,24 +108,29 @@ void options_set_defaults(Options *options) {
     options->ground_item_models = 0;
     options->ground_item_text = 1;
     options->distant_animation = 1;
-    options->tga_sprites = 0;
+    options->tga_sprites = 1;
     options->show_hover_tooltip = 0;
     options->touch_keyboard_right = 0;
 
     /* bank */
     options->bank_unstackble_withdraw = 1;
-    options->bank_search = 1;
-    options->bank_capacity = 1;
-    options->bank_value = 1;
-    options->bank_expand = 1;
-    options->bank_scroll = 1;
-    options->bank_menus = 1;
-    options->bank_inventory = 1;
-    options->bank_maintain_slot = 1;
+    options->bank_search = 0;
+    options->bank_capacity = 0;
+    options->bank_value = 0;
+    options->bank_expand = 0;
+    options->bank_scroll = 0;
+    options->bank_menus = 0;
+    options->bank_inventory = 0;
+    options->bank_maintain_slot = 0;
 
     /* gl */
+#ifndef EMSCRIPTEN
     options->ui_scale = 1;
     options->anti_alias = 1;
+#else
+    options->ui_scale = 0;
+    options->anti_alias = 0;
+#endif
     options->field_of_view = 360;
 }
 
@@ -135,9 +144,9 @@ void options_set_vanilla(Options *options) {
     options->version_models = VERSION_MODELS;
     options->version_sounds = VERSION_SOUNDS;
     options->version_textures = VERSION_TEXTURES;
-    options->fatigue = 1;
-    options->max_quests = 50;
-    options->max_skills = 18;
+    options->fatigue = 0;
+    options->max_quests = 23;
+    options->max_skills = 16;
     options->registration = 0;
     options->idle_logout = 1;
     options->remember_username = 0;
@@ -364,8 +373,12 @@ void options_load(Options *options) {
 
     /* controls */
     OPTION_INI_INT("mouse_wheel", options->mouse_wheel, 0, 1);
+#ifdef EMSCRIPTEN
+    OPTION_INI_INT("middle_click_camera", options->middle_click_camera, 0, 0);
+#else
     OPTION_INI_INT("middle_click_camera", options->middle_click_camera, -100,
                    100);
+#endif
     OPTION_INI_INT("zoom_camera", options->zoom_camera, 0, 1);
     OPTION_INI_INT("tab_respond", options->tab_respond, 0, 1);
     OPTION_INI_INT("option_numbers", options->option_numbers, 0, 1);
@@ -388,7 +401,11 @@ void options_load(Options *options) {
     OPTION_INI_INT("fog_of_war", options->fog_of_war, 0, 1);
     OPTION_INI_INT("ran_target_fps", options->ran_target_fps, 0, 50);
     OPTION_INI_INT("display_fps", options->display_fps, 0, 1);
+#ifndef EMSCRIPTEN
     OPTION_INI_INT("ui_scale", options->ui_scale, 0, 1);
+#else
+    OPTION_INI_INT("ui_scale", options->ui_scale, 0, 0);
+#endif
     OPTION_INI_INT("anti_alias", options->anti_alias, 0, 1);
     OPTION_INI_INT("field_of_view", options->field_of_view, 0, 880);
     OPTION_INI_INT("show_roofs", options->show_roofs, 0, 1);
@@ -399,10 +416,10 @@ void options_load(Options *options) {
     OPTION_INI_INT("inventory_count", options->inventory_count, 0, 1);
     OPTION_INI_INT("condense_item_amounts", options->condense_item_amounts, 0,
                    1);
-    OPTION_INI_INT("certificate_items", options->certificate_items, 0, 1);
+    OPTION_INI_INT("certificate_items", options->certificate_items, 0, 0);
     OPTION_INI_INT("wilderness_warning", options->wilderness_warning, 0, 1);
     OPTION_INI_INT("status_bars", options->status_bars, 0, 1);
-    OPTION_INI_INT("ground_item_models", options->ground_item_models, 0, 1);
+    OPTION_INI_INT("ground_item_models", options->ground_item_models, 0, 0);
     OPTION_INI_INT("ground_item_text", options->ground_item_text, 0, 1);
     OPTION_INI_INT("distant_animation", options->distant_animation, 0, 1);
     OPTION_INI_INT("tga_sprites", options->tga_sprites, 0, 1);

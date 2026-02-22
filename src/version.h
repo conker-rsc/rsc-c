@@ -1,13 +1,16 @@
 #ifndef _H_VERSION
 #define _H_VERSION
 
-#define VERSION_CONFIG 85
-#define VERSION_ENTITY 24
+#define VERSION_CONFIG 55
+#define VERSION_ENTITY 13
 #define VERSION_FILTER 2
-#define VERSION_MAPS 63
-// #define VERSION_MEDIA 58
+#define VERSION_MAPS 33
+#if defined(ANDROID)
 #define VERSION_MEDIA 59
-#define VERSION_MODELS 36
+#else
+#define VERSION_MEDIA 33
+#endif
+#define VERSION_MODELS 16
 #define VERSION_SOUNDS 1
 #define VERSION_TEXTURES 17
 

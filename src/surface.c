@@ -252,11 +252,17 @@ void surface_draw(Surface *surface) {
     SDL_BlitSurface(mud->pixel_surface, NULL, mud->screen, NULL);
     SDL_Flip(mud->screen);
 #else
+#if !defined(EMSCRIPTEN)
     if (mud->window != NULL) {
         SDL_BlitScaled(mud->pixel_surface, NULL, mud->screen, NULL);
-        // SDL_BlitSurface(mud->pixel_surface, NULL, mud->screen, NULL);
         SDL_UpdateWindowSurface(mud->window);
     }
+#else
+    if (mud->window != NULL) {
+        SDL_BlitSurface(mud->pixel_surface, NULL, mud->screen, NULL);
+        SDL_UpdateWindowSurface(mud->window);
+    }
+#endif
 #endif
 #endif
 

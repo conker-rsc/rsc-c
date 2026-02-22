@@ -1,6 +1,6 @@
 CC = emcc
 DEBUG ?= 0
-RENDER_GL ?= 1
+RENDER_GL ?= 0
 SRC = $(wildcard src/*.c src/lib/*.c src/lib/rsa/*.c src/ui/*.c src/custom/*.c)
 OBJ = $(SRC:.c=.o)
 # remove -fwrapv when code is converted to use unsigned ints or
@@ -31,7 +31,7 @@ ifeq ($(DEBUG), 1)
 CFLAGS += -Wall -Wextra -pedantic -g
 LDFLAGS += -s SOCKET_DEBUG=1
 else
-CFLAGS += -s -O3 -ffast-math -flto
+CFLAGS += -s -Os -ffast-math -flto
 ifeq ($(RENDER_GL), 0)
 LDFLAGS += -flto
 endif
