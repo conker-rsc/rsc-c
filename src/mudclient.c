@@ -9,8 +9,8 @@ EM_JS(int, can_resize, (), {
                document.activeElement !== window._mudclientPassword;
 });
 
-EM_JS(int, get_window_width, (), { return /*window.innerWidth*/MUD_VANILLA_WIDTH; });
-EM_JS(int, get_window_height, (), { return /*window.innerHeight*/MUD_VANILLA_HEIGHT; });
+EM_JS(int, get_window_width, (), { return /*window.innerWidth*/512; });
+EM_JS(int, get_window_height, (), { return /*window.innerHeight*/346; });
 
 EM_JS(void, browser_trigger_keyboard,
       (char *text, int is_password, int x, int y, int width, int height,
